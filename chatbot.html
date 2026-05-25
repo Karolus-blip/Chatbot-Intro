@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot WhatsApp Dark</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      background:#0f172a;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+
+    .chat-container{
+      width:380px;
+      height:650px;
+      background:#0b141a;
+      border-radius:18px;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    /* HEADER */
+    .chat-header{
+      background:#202c33;
+      color:white;
+      padding:16px;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      border-bottom:1px solid #2f3b43;
+    }
+
+    .avatar{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:#25d366;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:bold;
+      color:#111;
+    }
+
+    .header-info h2{
+      font-size:16px;
+    }
+
+    .header-info p{
+      font-size:12px;
+      color:#aebac1;
+    }
+
+    /* CHAT AREA */
+    .chat-messages{
+      flex:1;
+      padding:15px;
+      overflow-y:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+
+      background-image:url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
+      background-color:#0b141a;
+    }
+
+    .message{
+      max-width:75%;
+      padding:10px 14px;
+      border-radius:10px;
+      font-size:14px;
+      line-height:1.4;
+      position:relative;
+      word-wrap:break-word;
+      animation:fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+        }
+    .user{
+      align-self:flex-end;
+      background:#005c4b;
+      color:white;
+      border-top-right-radius:2px;
+    }
+
+    .bot{
+      align-self:flex-start;
+      background:#202c33;
+      color:white;
+      border-top-left-radius:2px;
+    }
+
+    /* INPUT */
+    .chat-input{
+      background:#202c33;
+      padding:10px;
+      display:flex;
+      gap:10px;
+      border-top:1px solid #2f3b43;
+    }
+
+    .chat-input input{
+      flex:1;
+      padding:12px;
+      border:none;
+      border-radius:25px;
+      background:#2a3942;
+      color:white;
+      outline:none;
+      font-size:14px;
+    }
+
+    .chat-input input::placeholder{
+      color:#aebac1;
+    }
+
+    .chat-input button{
+      border:none;
+      width:50px;
+      border-radius:50%;
+      background:#25d366;
+      color:#111;
+      cursor:pointer;
+      font-size:16px;
+      font-weight:bold;
+      transition:0.2s;
+    }
+
+    .chat-input button:hover{
+      transform:scale(1.05);
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="chat-container">
+
+    <!-- HEADER -->
+    <div class="chat-header">
+      <div class="avatar">B</div>
+
+      <div class="header-info">
+        <h2>Bot Assistant</h2>
+        <p>En línea</p>
+      </div>
+    </div>
+
+    <!-- MENSAJES -->
+    <div class="chat-messages" id="chatMessages">
+
+      <div class="message bot">
+        Hola 👋 Soy tu chatbot.
+      </div>
+
+    </div>
+
+    <!-- INPUT -->
+    <div class="chat-input">
+      <input 
+        type="text"
+        id="userInput"
+        placeholder="Escribe un mensaje..."
+      >
+
+      <button onclick="sendMessage()">➤</button>
+    </div>
+
+  </div>
+
+  <script>
+
+    const chatMessages = document.getElementById("chatMessages");
+    const userInput = document.getElementById("userInput");
+
+    // ENTER para enviar
+    userInput.addEventListener("keypress", function(event){
+      if(event.key === "Enter"){
+        sendMessage();
+      }
+    });
+
+    // Agregar mensajes al chat
+    function addMessage(text, sender){
+
+      const message = document.createElement("div");
+
+      message.classList.add("message");
+      message.classList.add(sender);
+
+      message.textContent = text;
+
+      chatMessages.appendChild(message);
+
+      // Scroll automático
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Detectar intención
+    function detectIntent(message){
+
+  // Normalizar texto
+  message = message
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+  // LISTAS DE KEYWORDS
+  const saludos = [
+    "hola",
+    "hey",
+    "buenas",
+    "buen dia",
+    "que tal",
+    "como estas"
+  ];
+
+  const despedidas = [
+    "adios",
+    "bye",
+    "nos vemos",
+    "hasta luego",
+    "hasta la proxima",
+    "cuidate",
+    "un placer"
+  ];
+
+  const ayuda = [
+    "ayuda",
+    "soporte",
+    "ayudame"
+  ];
+
+  const nombre = [
+    "tu nombre",
+    "como te llamas",
+    "quien eres"
+  ];
+
+  // FUNCIÓN AUXILIAR
+  function containsKeyword(keywords){
+    return keywords.some(keyword => message.includes(keyword));
+  }
+
+  // INTENTS
+
+  if(containsKeyword(saludos)){
+    return "¡Hola! ¿Qué tal? 😊";
+  }
+
+  if(containsKeyword(despedidas)){
+    return "Hasta luego 👋"; "Hasta la próxima"
+  }
+
+  if(containsKeyword(nombre)){
+    return "Soy tu asistente virtual del Fondo de Cultura Económica 😄";
+  }
+
+  if(containsKeyword(ayuda)){
+    return "Claro. Estoy aquí para ayudarte.";
+  }
+
+  if(message.includes("hora")){
+    const hora = new Date().toLocaleTimeString();
+    return "La hora actual es: " + hora;
+  }
+
+  if(message.includes("fecha")){
+    const fecha = new Date().toLocaleDateString();
+    return "La fecha de hoy es: " + fecha;
+  }
+
+  if(message.includes("pedido")){
+    return "Claro, ¿en qué puedo ayudarte con tu pedido?";
+  }
+  // FALLBACK
+  return "Lo siento, no entendí eso 🤔";
+}
+    
+
+    // Enviar mensaje
+    function sendMessage(){
+
+      const message = userInput.value.trim();
+
+      if(message === "") return;
+
+      // Mostrar mensaje usuario
+      addMessage(message, "user");
+
+      // Limpiar input
+      userInput.value = "";
+
+      // Respuesta bot
+      setTimeout(() => {
+
+        const reply = detectIntent(message);
+
+        addMessage(reply, "bot");
+
+      }, 500);
+
+    }
+
+  </script>
+
+</body>
+</html>
