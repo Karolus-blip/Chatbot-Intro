@@ -33,7 +33,7 @@ El repositorio está estructurado para mostrar el ciclo completo de diseño de u
 ---
 
 ## 🚀 Tecnologías y Herramientas Utilizadas
-* **Diseño y Flujo:** [Miro / Figma / Voiceflow - *Elige la que uses*]
+* **Diseño y Flujo:** 
 * **Lógica del Backend:** Python 3.x (Estructuras de control, condicionales y manejo de strings)
 * **Maquetación Frontend:** HTML5 y CSS básico
 
